@@ -7,8 +7,8 @@
 
 #---------------------------------------------------------------------
 # testmywcdiff is a testing script for the mywc program.
-# To run it, type "testmywcdiff", followed by the name of
-# an input file.
+# To run it, issue the command "./testmywcdiff somefile ",
+# where somefile is the name of an input file.
 #
 # To use it, the working directory must contain:
 # (1) mywcc, an executable binary file built from mywc.c, and
