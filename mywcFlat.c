@@ -43,11 +43,13 @@ whileLoop:
       goto endIfWord;
    lWordCount++;
    iInWord = FALSE;
+   goto endIfWord;
 
 elseSpace:
 
    if (iInWord)
-      iInWord = TRUE;
+      goto endIfWord;
+   iInWord = TRUE;
 
 endIfWord:
 
