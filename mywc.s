@@ -68,7 +68,7 @@ whileLoop:
         bl      getchar
         adr     x1, iChar
         str     w0, [x1]
-        cmp     [x1], EOF
+        cmp     w0, EOF
         beq endWhileLoop
 
     // lCharCount++;
@@ -137,7 +137,7 @@ whileLoop:
         cmp     x3, FALSE
         beq     endIfWord2
         
-        lWordCount++;
+    // lWordCount++;
         adr     x0, lWordCount
         ldr     x4, [x0]
         add     x4, x4, 1
