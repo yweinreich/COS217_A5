@@ -9,15 +9,19 @@
 /*--------------------------------------------------------------------*/
 
 /* In lieu of a boolean data type. */
-enum {FALSE, TRUE};
+enum
+{
+   FALSE,
+   TRUE
+};
 
 /*--------------------------------------------------------------------*/
 
-static long lLineCount = 0;      /* Bad style. */
-static long lWordCount = 0;      /* Bad style. */
-static long lCharCount = 0;      /* Bad style. */
-static int iChar;                /* Bad style. */
-static int iInWord = FALSE;      /* Bad style. */
+static long lLineCount = 0; /* Bad style. */
+static long lWordCount = 0; /* Bad style. */
+static long lCharCount = 0; /* Bad style. */
+static int iChar;           /* Bad style. */
+static int iInWord = FALSE; /* Bad style. */
 
 /*--------------------------------------------------------------------*/
 
@@ -27,31 +31,38 @@ static int iInWord = FALSE;      /* Bad style. */
 
 int main(void)
 {
-   while ((iChar = getchar()) != EOF)
-   {
-      lCharCount++;
+whileLoop:
+   if ((iChar = getchar()) == EOF)
+      goto endWhileLoop;
+   lCharCount++;
 
-      if (isspace(iChar))
-      {
-         if (iInWord)
-         {
-            lWordCount++;
-            iInWord = FALSE;
-         }
-      }
-      else
-      {
-         if (! iInWord)
-            iInWord = TRUE;
-      }
+   if (!isspace(iChar))
+      goto elseSpace;
 
-      if (iChar == '\n')
-         lLineCount++;
-   }
+   if (!iInWord)
+      goto endIfWord;
+   lWordCount++;
+   iInWord = FALSE;
+
+elseSpace:
 
    if (iInWord)
-      lWordCount++;
+      iInWord = TRUE;
 
+endIfWord:
+
+   if (iChar != '\n')
+      goto whileLoop;
+   lLineCount++;
+
+   goto whileLoop;
+
+endWhileLoop:
+   if (!iInWord)
+      goto endIfWord2;
+   lWordCount++;
+
+endIfWord2:
    printf("%7ld %7ld %7ld\n", lLineCount, lWordCount, lCharCount);
    return 0;
 }
