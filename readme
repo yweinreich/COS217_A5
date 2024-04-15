@@ -96,7 +96,35 @@ newline characters, and that the word count is 0 (doesn't increment) when
 more newline characters are read (no matter how many in a row).
 
 Statement tests:
+mywcOneLetter.txt - one letter. Checks that our code enters the while loop
+and  increments the charCount. Also checks that it enters the if statement
+after the while loop and increments the word count. Also checks that it
+correctly prints the result.
 
+mywcOneSpace.txt - one space. Checks that our code enters the while loop
+and  increments the charCount. Also checks that does NOT enters the if
+statement after the while loop. Also checks that it correctly prints the
+result.
+
+mywcOneNewline.txt - one space. Checks that our code enters the while loop
+and  increments the charCount and then enters the if statement to increment
+the line count. Also checks that does NOT enters the if statement after the
+while loop. Also checks that it correctly prints the result.
+
+mywcOneOfEach.txt - one letter, one space, and one newline. Checks that our
+code _____
+
+mywcTwoOfEach.txt
+
+mywcLSN.txt - letter, space, newline pattern. Checks state transitions.
+
+mywcTwoWords.txt
+
+mywcWords.txt - more robust version of TwoWords.
+
+mywcProverb.txt
+
+mywcProverb2.txt
 
 Stress tests:
 mywcLong.txt - a long excerpt from Sherlock Holmes containing a random
