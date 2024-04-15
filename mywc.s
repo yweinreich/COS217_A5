@@ -110,6 +110,8 @@ whileLoop:
 
     // iInWord = TRUE;
         mov     w3, TRUE
+        adr     x0, iInWord
+        str     w3, [x0]
 
     endIfWord:
 
