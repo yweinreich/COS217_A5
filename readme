@@ -133,7 +133,7 @@ mywcLong.txt - a long excerpt from Sherlock Holmes containing a random
 assortment of characters - letters, spaces, newlines, etc. Tests that
 our code works for long input files.
 
-mywcLong.txt - an even longer excerpt from Sherlock Holmes containing
+mywcLonger.txt - an even longer excerpt from Sherlock Holmes containing
 a random assortment of characters - letters, spaces, newlines, etc.
 Tests that our code works for very long input files.
 
