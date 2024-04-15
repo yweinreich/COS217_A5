@@ -145,7 +145,7 @@ whileLoop:
         add     x4, x4, 1
         str     x4, [x0]
 
-        endIfWord2:
+    endIfWord2:
     // printf("%7ld %7ld %7ld\n", lLineCount, lWordCount, lCharCount);
         adr     x0, printfFormatStr
         adr     x1, lLineCount
