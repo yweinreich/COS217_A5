@@ -5,13 +5,10 @@
     .equ TRUE, 1
 // EOF
     .equ EOF, -1
-// ASCII value of '/n'
-    .equ newLineASCII, 10
 
 //--------------------------------------------------------------------
     .section .rodata
-newLineStr:
-        .string "\n"
+
 printfFormatStr:
         .string "%7ld %7ld %7ld\n"
 
@@ -122,7 +119,7 @@ endIfWord:
     // if (iChar != '\n') goto whileLoop;
         adr     x0, iChar
         ldr     w1, [x0]
-        cmp     w1, newLineASCII
+        cmp     w1, 'n'
         bne     whileLoop
 
     // lLineCount++;
