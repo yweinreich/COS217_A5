@@ -96,35 +96,37 @@ newline characters, and that the word count is 0 (doesn't increment) when
 more newline characters are read (no matter how many in a row).
 
 Statement tests:
-mywcOneLetter.txt - one letter. Checks that our code enters the while loop
-and  increments the charCount. Also checks that it enters the if statement
-after the while loop and increments the word count. Also checks that it
-correctly prints the result.
+mywcOneLetter.txt - one letter. Checks that our code executes lines 28-33
+and 42-45 and 52-56 (skips the if blocks after executing lines 34, 48).
 
-mywcOneSpace.txt - one space. Checks that our code enters the while loop
-and  increments the charCount. Also checks that does NOT enters the if
-statement after the while loop. Also checks that it correctly prints the
-result.
+mywcOneSpace.txt - one space. Checks that our code executes lines 28-36
+and 55-56 (skips the if blocks after executing lines 48, 52).
 
-mywcOneNewline.txt - one space. Checks that our code enters the while loop
-and  increments the charCount and then enters the if statement to increment
-the line count. Also checks that does NOT enters the if statement after the
-while loop. Also checks that it correctly prints the result.
+mywcOneNewline.txt - one newline. Checks that our code executes lines 28-33
+and 48-49 and 55-56 (skips the if blocks after executing lines 34, 44, 52).
 
 mywcOneOfEach.txt - one letter, one space, and one newline. Checks that our
-code _____
+code executes lines 28-33, 42-46 on the first pass through the while loop
+and then 34-41 on the second pass and then lines 48-49 on the third pass.
+Also checks that lines 55-56 are executed.
 
-mywcTwoOfEach.txt
+mywcLSN.txt - letter, space, newline pattern. Executes the same lines of
+code as executed in mywcOneOfEach.txt but multiple times in a row. Checks
+to make sure our program works for inputs larger than one word and newline.
 
-mywcLSN.txt - letter, space, newline pattern. Checks state transitions.
+mywcTwoWords.txt - "Hello World" - Checks that our code executes lines
+28-33, 42-46 while in each word and 34-41 when it reaches the space and
+Also checks that lines 55-56 are executed. Checks that our code works for
+words longer than one letter, and that our code works when it ends in the
+iInWord state. 
 
-mywcTwoWords.txt
+mywcProverb.txt - a combination of words, spaces, and newlines that executes
+all lines of mywc.c except for line 53. Checks that our code works for longer
+inputs with varying combinations of words, spaces, and newlines.
 
-mywcWords.txt - more robust version of TwoWords.
-
-mywcProverb.txt
-
-mywcProverb2.txt
+mywcProverb2.txt - same as mywcProverb.txt except that the code ends in the
+iInWord state and thus line 53 should be executed. Checks that our code works
+for longer inputs with varying combinations of words, spaces, and newlines.
 
 Stress tests:
 mywcLong.txt - a long excerpt from Sherlock Holmes containing a random
