@@ -78,7 +78,34 @@ particular, what bugs are in your submission?
 ------------------------------------------------------------------------
 What is your mywc program test plan?
 
+We created several tests to check that our code works as expected.
+Boundary tests:
+mywcEmpty.txt - an empty file. Ensures that all counts are 0 in the
+case of an empty input file.
 
+mywcJustLetters.txt - a string of letters with no spaces or newlines.
+Ensures that the word count is 1 and the newline count is 0 for when no
+spaces or newline characters have been read.
+
+mywcJustSpaces.txt - 15 spaces. Ensures that our code works for more than
+one space in a row, and that the word count is 0 (doesn't increment) when
+more space characters have been read (no matter how many in a row).
+
+mywcJustNewlines.txt - 15 newline characters. Ensures that our code counts
+newline characters, and that the word count is 0 (doesn't increment) when
+more newline characters are read (no matter how many in a row).
+
+Statement tests:
+
+
+Stress tests:
+mywcLong.txt - a long excerpt from Sherlock Holmes containing a random
+assortment of characters - letters, spaces, newlines, etc. Tests that
+our code works for long input files.
+
+mywcLong.txt - an even longer excerpt from Sherlock Holmes containing
+a random assortment of characters - letters, spaces, newlines, etc.
+Tests that our code works for very long input files.
 
 ------------------------------------------------------------------------
 What are the CPU times consumed by the programs from Parts 2a, 2b, 2d,
