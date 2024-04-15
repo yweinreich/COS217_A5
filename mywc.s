@@ -119,7 +119,7 @@ endIfWord:
     // if (iChar != '\n') goto whileLoop;
         adr     x0, iChar
         ldr     w1, [x0]
-        cmp     w1, 'n'
+        cmp     w1, '\n'
         bne     whileLoop
 
     // lLineCount++;
