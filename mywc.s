@@ -5,6 +5,8 @@
     .equ TRUE, 1
 // EOF
     .equ EOF, -1
+// ASCII value of '/n'
+    .equ newLineASCII, 10
 
 //--------------------------------------------------------------------
     .section .rodata
@@ -99,10 +101,12 @@ whileLoop:
         str     x4, [x0]
     // iInWord = FALSE;
         mov     w3, FALSE
+        adr     x0, iInWord
+        str     w3, [x0]
     // goto endIfWord;
         b       endIfWord
 
-    elseSpace:
+elseSpace:
 
     // if (iInWord) goto endIfWord;
         cmp     w3, TRUE
@@ -113,14 +117,12 @@ whileLoop:
         adr     x0, iInWord
         str     w3, [x0]
 
-    endIfWord:
+endIfWord:
 
     // if (iChar != '\n') goto whileLoop;
         adr     x0, iChar
         ldr     w1, [x0]
-        adr     x0, newLineStr
-        ldr     w5, [x0]
-        cmp     w1, w5
+        cmp     w1, newLineASCII
         bne     whileLoop
 
     // lLineCount++;
@@ -132,20 +134,20 @@ whileLoop:
     // goto whileLoop;
         b whileLoop
 
-    endWhileLoop:
+endWhileLoop:
     // if (!iInWord) goto endIfWord2;
         adr     x0, iInWord
-        ldr     x3, [x0]
-        cmp     x3, FALSE
+        ldr     w3, [x0]
+        cmp     w3, FALSE
         beq     endIfWord2
-        
+
     // lWordCount++;
         adr     x0, lWordCount
         ldr     x4, [x0]
         add     x4, x4, 1
         str     x4, [x0]
 
-    endIfWord2:
+endIfWord2:
     // printf("%7ld %7ld %7ld\n", lLineCount, lWordCount, lCharCount);
         adr     x0, printfFormatStr
         adr     x1, lLineCount
