@@ -137,6 +137,13 @@ mywcLonger.txt - an even longer excerpt from Sherlock Holmes containing
 a random assortment of characters - letters, spaces, newlines, etc.
 Tests that our code works for very long input files.
 
+mywcRandShort.txt - a text file generated using rand() characters.
+Checks to make sure our program works on random input.
+
+mywcRandShort.txt - a long text file generated using rand() characters.
+Checks to make sure our program works on random input and on long input
+files.
+
 ------------------------------------------------------------------------
 What are the CPU times consumed by the programs from Parts 2a, 2b, 2d,
 2e, and 2f to compute fib(250000) on armlab? Fill in the blanks.
