@@ -24,6 +24,11 @@
 // must be a multiple of 16
 .equ LARGER_STACK_BYTECOUNT, 32
 
+// stack pointer offsets
+.equ lLength1, 8
+.equ lLength2, 16
+.equ uLength, 24
+
 // Return the larger of lLength1 and lLength2.
 // static long BigInt_larger(long lLength1, long lLength2)
 BigInt_larger:
@@ -32,7 +37,7 @@ BigInt_larger:
     str     x30, [sp]
 
     // store parameters on the stack
-    
+
 
     // long lLarger;
     if (lLength1 <= lLength2)
