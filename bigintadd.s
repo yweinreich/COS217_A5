@@ -24,10 +24,10 @@
 // must be a multiple of 16
 .equ LARGER_STACK_BYTECOUNT, 32
 
-// stack pointer offsets
-.equ lLength1, 8
-.equ lLength2, 16
-.equ uLength, 24
+// stack pointer offsets for parameters and local variables
+.equ LLENGTH1, 8
+.equ LLENGTH2, 16
+.equ LLARGER, 24
 
 // Return the larger of lLength1 and lLength2.
 // static long BigInt_larger(long lLength1, long lLength2)
@@ -36,25 +36,76 @@ BigInt_larger:
     sub     sp, sp LARGER_STACK_BYTECOUNT
     str     x30, [sp]
 
-    // store parameters on the stack
+    // store lLength1 on the stack
+    mov     x2, sp
+    add     x2, x2, LLENGTH1
+    str     x0, [x2]
 
+    // store lLength1 on the stack
+    mov     x3, sp
+    add     x3, x3, LLENGTH2
+    str     x1, [x3]
 
     // long lLarger;
-    if (lLength1 <= lLength2)
-        goto largerElse;
-    lLarger = lLength1;
-    goto endLargerIf;
+    
+    // if (lLength1 <= lLength2) goto largerElse;
+    mov     x2, sp
+    add     x2, x2, LLENGTH1
+    ldr     x2, [x2]
+
+    mov     x3, sp
+    add     x3, x3, LLENGTH2
+    str     x3, [x3]
+
+    cmp     x2, x3
+    ble     largerElse
+
+    // lLarger = lLength1;
+    // get lLength1
+    mov     x2, sp
+    add     x2, x2, LLENGTH1
+    ldr     x2, [x2]
+    // get stack address of lLarger
+    mov     x4, sp
+    add     x4, x4, LLARGER
+    // store lLength1 in lLarger
+    str     x2, [x4]   
+
+    // goto endLargerIf;
+    b       endLargerIf
 
 largerElse:
-    lLarger = lLength2;
+    // lLarger = lLength2;
+    // get lLength2
+    mov     x3, sp
+    add     x3, x3, LLENGTH2
+    ldr     x3, [x3]
+    // get stack address of lLarger
+    mov     x4, sp
+    add     x4, x4, LLARGER
+    // store lLength2 in lLarger
+    str     x3, [x4]   
+
 endLargerIf:
-    return lLarger;
-}
+    // return lLarger;
+    mov     x4, sp
+    add     x4, x4, LLARGER
+    ldr     x4, [x4]
+    mov     x0, x4
+
+    // epilog
+    ldr     x30, [sp]
+    add     sp, sp, LARGER_STACK_BYTECOUNT
+    ret
+
+    .size BigInt_larger, (. - BigInt_larger)
 
 /*--------------------------------------------------------------------*/
 
 // must be a multiple of 16
 .equ ADD_STACK_BYTECOUNT, 64
+
+//
 
 /* Assign the sum of oAddend1 and oAddend2 to oSum.  oSum should be
    distinct from oAddend1 and oAddend2.  Return 0 (FALSE) if an
