@@ -47,6 +47,7 @@ iChar:
 
 // must be multiple of 16, don't ask
 .equ MAIN_STACK_BYTECOUNT, 16
+
 // give registers meaningful names
 currentChar .req x1
 charCount   .req x2
