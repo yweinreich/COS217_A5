@@ -9,7 +9,11 @@
 #include <assert.h>
 
 /* In lieu of a boolean data type. */
-enum {FALSE, TRUE};
+enum
+{
+   FALSE,
+   TRUE
+};
 
 /*--------------------------------------------------------------------*/
 
@@ -18,10 +22,13 @@ enum {FALSE, TRUE};
 static long BigInt_larger(long lLength1, long lLength2)
 {
    long lLarger;
-   if (lLength1 > lLength2)
-      lLarger = lLength1;
-   else
-      lLarger = lLength2;
+   if (lLength1 <= lLength2)
+      goto largerElse;
+   lLarger = lLength1;
+   goto endLargerIf;
+largerElse:
+   lLarger = lLength2;
+endLargerIf:
    return lLarger;
 }
 
