@@ -1,27 +1,40 @@
-/*--------------------------------------------------------------------*/
-/* bigintaddflat.c                                                    */
-/* Author: Ariella and Jonathan                                       */
-/*--------------------------------------------------------------------*/
+//--------------------------------------------------------------------
+// bigintaddflat.c                                                    
+// Author: Ariella and Jonathan                                       
+//--------------------------------------------------------------------
 
-#include "bigint.h"
-#include "bigintprivate.h"
-#include <string.h>
-#include <assert.h>
+// In lieu of a boolean data type.
+//    FALSE
+.equ FALSE, 0
+//    TRUE
+.equ TRUE, 1
 
-/* In lieu of a boolean data type. */
-enum
-{
-    FALSE,
-    TRUE
-};
+//--------------------------------------------------------------------
+    .section .rodota
 
-/*--------------------------------------------------------------------*/
+//--------------------------------------------------------------------
+    .section .data
 
-/* Return the larger of lLength1 and lLength2. */
+//--------------------------------------------------------------------
+    .section .bss
 
-static long BigInt_larger(long lLength1, long lLength2)
-{
-    long lLarger;
+//--------------------------------------------------------------------
+    .section .text
+
+// must be a multiple of 16
+.equ LARGER_STACK_BYTECOUNT, 32
+
+// Return the larger of lLength1 and lLength2.
+// static long BigInt_larger(long lLength1, long lLength2)
+BigInt_larger:
+    // prolog
+    sub     sp, sp LARGER_STACK_BYTECOUNT
+    str     x30, [sp]
+
+    // store parameters on the stack
+    
+
+    // long lLarger;
     if (lLength1 <= lLength2)
         goto largerElse;
     lLarger = lLength1;
@@ -34,6 +47,9 @@ endLargerIf:
 }
 
 /*--------------------------------------------------------------------*/
+
+// must be a multiple of 16
+.equ ADD_STACK_BYTECOUNT, 64
 
 /* Assign the sum of oAddend1 and oAddend2 to oSum.  oSum should be
    distinct from oAddend1 and oAddend2.  Return 0 (FALSE) if an
