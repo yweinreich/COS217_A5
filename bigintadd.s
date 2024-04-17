@@ -105,7 +105,8 @@ endLargerIf:
 // must be a multiple of 16
 .equ ADD_STACK_BYTECOUNT, 64
 
-//
+// stack pointer offsets for parameters and local variables
+.equ 
 
 /* Assign the sum of oAddend1 and oAddend2 to oSum.  oSum should be
    distinct from oAddend1 and oAddend2.  Return 0 (FALSE) if an
