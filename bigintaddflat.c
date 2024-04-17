@@ -45,45 +45,55 @@ int BigInt_add(BigInt_T oAddend1, BigInt_T oAddend2, BigInt_T oSum)
    long lIndex;
    long lSumLength;
 
-   assert(oAddend1 != NULL);
-   assert(oAddend2 != NULL);
-   assert(oSum != NULL);
-   assert(oSum != oAddend1);
-   assert(oSum != oAddend2);
-
    /* Determine the larger length. */
    lSumLength = BigInt_larger(oAddend1->lLength, oAddend2->lLength);
 
    /* Clear oSum's array if necessary. */
-   if (oSum->lLength > lSumLength)
-      memset(oSum->aulDigits, 0, MAX_DIGITS * sizeof(unsigned long));
+   if (oSum->lLength <= lSumLength)
+      goto endClearIf;
+   memset(oSum->aulDigits, 0, MAX_DIGITS * sizeof(unsigned long));
+endClearIf:
 
    /* Perform the addition. */
    ulCarry = 0;
-   for (lIndex = 0; lIndex < lSumLength; lIndex++)
-   {
-      ulSum = ulCarry;
-      ulCarry = 0;
 
-      ulSum += oAddend1->aulDigits[lIndex];
-      if (ulSum < oAddend1->aulDigits[lIndex]) /* Check for overflow. */
-         ulCarry = 1;
+   lIndex = 0;
+additionLoop:
+   if (lIndex >= lSumLength)
+      goto endAdditionLoop;
+   ulSum = ulCarry;
+   ulCarry = 0;
 
-      ulSum += oAddend2->aulDigits[lIndex];
-      if (ulSum < oAddend2->aulDigits[lIndex]) /* Check for overflow. */
-         ulCarry = 1;
+   ulSum += oAddend1->aulDigits[lIndex];
 
-      oSum->aulDigits[lIndex] = ulSum;
-   }
+   if (ulSum >= oAddend1->aulDigits[lIndex])
+      goto endOverflowIf1; /* Check for overflow. */
+   ulCarry = 1;
+endOverflowIf1:
+   ulSum += oAddend2->aulDigits[lIndex];
+
+   if (ulSum >= oAddend2->aulDigits[lIndex])
+      goto endOverflowIf2; /* Check for overflow. */
+   ulCarry = 1;
+endOverflowIf2:
+   oSum->aulDigits[lIndex] = ulSum;
+
+   lIndex++;
+   goto additionLoop;
+
+endAdditionLoop:
 
    /* Check for a carry out of the last "column" of the addition. */
-   if (ulCarry == 1)
-   {
-      if (lSumLength == MAX_DIGITS)
-         return FALSE;
-      oSum->aulDigits[lSumLength] = 1;
-      lSumLength++;
-   }
+   if (ulCarry != 1)
+      goto endCarryIf;
+
+   if (lSumLength != MAX_DIGITS)
+      goto endMaxIf;
+   return FALSE;
+endMaxIf:
+   oSum->aulDigits[lSumLength] = 1;
+   lSumLength++;
+endCarryIf:
 
    /* Set the length of the sum. */
    oSum->lLength = lSumLength;
