@@ -37,61 +37,34 @@ BigInt_larger:
     str     x30, [sp]
 
     // store lLength1 on the stack
-    mov     x2, sp
-    add     x2, x2, LLENGTH1
-    str     x0, [x2]
+    str     x0, [sp, LLENGTH1]
 
     // store lLength1 on the stack
-    mov     x3, sp
-    add     x3, x3, LLENGTH2
-    str     x1, [x3]
+    str     x1, [sp, LLENGTH2]
 
     // long lLarger;
     
     // if (lLength1 <= lLength2) goto largerElse;
-    mov     x2, sp
-    add     x2, x2, LLENGTH1
-    ldr     x2, [x2]
-
-    mov     x3, sp
-    add     x3, x3, LLENGTH2
-    str     x3, [x3]
-
+    ldr     x2, [sp, LLENGTH1]
+    ldr     x3, [sp, LLENGTH2]
     cmp     x2, x3
     ble     largerElse
 
     // lLarger = lLength1;
-    // get lLength1
-    mov     x2, sp
-    add     x2, x2, LLENGTH1
-    ldr     x2, [x2]
-    // get stack address of lLarger
-    mov     x4, sp
-    add     x4, x4, LLARGER
-    // store lLength1 in lLarger
-    str     x2, [x4]   
+    ldr     x4, [sp, LLENGTH1]
+    str     x4, [sp, LLARGER]
 
     // goto endLargerIf;
     b       endLargerIf
 
 largerElse:
     // lLarger = lLength2;
-    // get lLength2
-    mov     x3, sp
-    add     x3, x3, LLENGTH2
-    ldr     x3, [x3]
-    // get stack address of lLarger
-    mov     x4, sp
-    add     x4, x4, LLARGER
-    // store lLength2 in lLarger
-    str     x3, [x4]   
+    ldr     x3, [sp, LLENGTH2]
+    str     x3, [sp, LLARGER]   
 
 endLargerIf:
     // return lLarger;
-    mov     x4, sp
-    add     x4, x4, LLARGER
-    ldr     x4, [x4]
-    mov     x0, x4
+    ldr     x0, [sp, LLARGER]
 
     // epilog
     ldr     x30, [sp]
@@ -105,45 +78,138 @@ endLargerIf:
 // must be a multiple of 16
 .equ ADD_STACK_BYTECOUNT, 64
 
-// stack pointer offsets for parameters and local variables
-.equ 
+// parameter local variables stack offsets
+.equ LSUMLENGTH, 8
+.equ LINDEX, 16
+.equ ULSUM, 24
+.equ ULCARRY, 32
+.equ OSUM, 40
+.equ OADDEND2, 48
+.equ OADDEND1, 56
+.equ longByteShift, 3
 
-/* Assign the sum of oAddend1 and oAddend2 to oSum.  oSum should be
-   distinct from oAddend1 and oAddend2.  Return 0 (FALSE) if an
-   overflow occurred, and 1 (TRUE) otherwise. */
+// structure field offsets
+.equ LLENGTH, 0
+.equ AULDIGITS, 8
 
-int BigInt_add(BigInt_T oAddend1, BigInt_T oAddend2, BigInt_T oSum)
-{
-    unsigned long ulCarry;
-    unsigned long ulSum;
-    long lIndex;
-    long lSumLength;
+// enumerated constants
+.equ MAX_DIGITS, 32768
 
-    /* Determine the larger length. */
-    lSumLength = BigInt_larger(oAddend1->lLength, oAddend2->lLength);
+// Assign the sum of oAddend1 and oAddend2 to oSum.  oSum should be
+// distinct from oAddend1 and oAddend2.  Return 0 (FALSE) if an
+// overflow occurred, and 1 (TRUE) otherwise.
 
-    /* Clear oSum's array if necessary. */
-    if (oSum->lLength <= lSumLength)
-        goto endClearIf;
-    memset(oSum->aulDigits, 0, MAX_DIGITS * sizeof(unsigned long));
+// int BigInt_add(BigInt_T oAddend1, BigInt_T oAddend2, BigInt_T oSum)
+BigInt_add:
+    // prolog
+    sub     sp, sp ADD_STACK_BYTECOUNT
+    str     x30, [sp]
+
+    // store oAddend1 on the stack
+    str     x0, [sp, OADDEND1]
+
+    // store oAddend2 on the stack
+    str     x1, [sp, OADDEND2]
+
+    // store oSum on the stack
+    str     x2, [sp, OSUM]
+
+//  unsigned long ulCarry;
+//  unsigned long ulSum;
+//  long lIndex;
+//  long lSumLength;
+
+    // Determine the larger length.
+    // lSumLength = BigInt_larger(oAddend1->lLength, oAddend2->lLength);
+    // get lLength from oAddend1, store in x0
+    ldr     x0, [sp, OADDEND1]
+    add     x0, x0, LLENGTH
+    ldr     x0, [x0]
+
+    // get lLength from oAddend2, store in x1
+    ldr     x1, [sp, OADDEND2]
+    add     x1, x1, LLENGTH
+    ldr     x1, [x1]
+
+    bl      BigInt_larger
+
+    // store return value of BigInt_larger in lSumLength
+    str     x0, [sp, LSUMLENGTH]
+
+    // Clear oSum's array if necessary.
+    // if (oSum->lLength <= lSumLength) goto endClearIf;
+    ldr     x0, [sp, OSUM]
+    add     x0, x0, LLENGTH
+    ldr     x0, [x0]
+
+    ldr     x1, [sp, LSUMLENGTH]
+
+    cmp     x0, x1
+    ble     endClearIf
+
+    // memset(oSum->aulDigits, 0, MAX_DIGITS * sizeof(unsigned long));
+    ldr     x0, [sp, ULSUM]
+    bl      sizeof
+    mov     x0, x2
+    
+    ldr     x0, [sp, OSUM]
+    add     x0, x0, AULDIGITS
+
+    mov     x1, 0
+
+    mov     x3, MAX_DIGITS
+    mul     x2, x2, x3
+
+    bl memset
+
 endClearIf:
 
-    /* Perform the addition. */
-    ulCarry = 0;
+    // Perform the addition.
+    // ulCarry = 0;
+    mov     x0, 0
+    str     x0, [sp, ULCARRY]
 
-    lIndex = 0;
+    // lIndex = 0;
+    mov     x0, 0
+    str     x0, [sp, LINDEX]
 
 additionLoop:
-    if (lIndex >= lSumLength)
-        goto endAdditionLoop;
-    ulSum = ulCarry;
-    ulCarry = 0;
+    // if (lIndex >= lSumLength) goto endAdditionLoop;
+    ldr     x0, [sp, LINDEX]
+    ldr     x1, [sp, LSUMLENGTH]
+    cmp     x0, x1
+    bge     endAdditionLoop
 
-    ulSum += oAddend1->aulDigits[lIndex];
+    // ulSum = ulCarry;
+    ldr     x2, [sp, ULCARRY]
+    str     x2, [sp, ULSUM]
 
-    if (ulSum >= oAddend1->aulDigits[lIndex])
-        goto endOverflowIf1; /* Check for overflow. */
-    ulCarry = 1;
+    // ulCarry = 0;
+    mov     x0, 0
+    str     x0, [sp, ULCARRY]
+
+    // ulSum += oAddend1->aulDigits[lIndex];
+    ldr     x0, [sp, ULSUM]
+    ldr     x1, [sp, OADDEND1]
+    add     x1, x1, AULDIGITS
+    ldr     x2, [sp, LINDEX]
+    ldr     x1, [x1, x2, lsl longByteShift]
+    add     x0, x0, x1
+    str     x0, [sp, ULSUM]
+
+    // Check for overflow.
+    // if (ulSum >= oAddend1->aulDigits[lIndex]) goto endOverflowIf1;
+    ldr     x0, [sp, ULSUM]
+    ldr     x1, [sp, OADDEND1]
+    add     x1, x1, AULDIGITS
+    ldr     x2, [sp, LINDEX]
+    ldr     x1, [x1, x2, lsl longByteShift]
+    cmp     x0, x1
+    bhs     endOverflowIf1
+
+    // ulCarry = 1;
+    mov     x0, 1
+    str     x0, [sp, ULCARRY]
 
 endOverflowIf1:
     ulSum += oAddend2->aulDigits[lIndex];
@@ -177,4 +243,3 @@ endCarryIf:
     oSum->lLength = lSumLength;
 
     return TRUE;
-}
