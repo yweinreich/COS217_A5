@@ -33,7 +33,7 @@
 // static long BigInt_larger(long lLength1, long lLength2)
 BigInt_larger:
     // prolog
-    sub     sp, sp LARGER_STACK_BYTECOUNT
+    sub     sp, sp, LARGER_STACK_BYTECOUNT
     str     x30, [sp]
 
     // store lLength1 on the stack
@@ -102,7 +102,7 @@ endLargerIf:
 // int BigInt_add(BigInt_T oAddend1, BigInt_T oAddend2, BigInt_T oSum)
 BigInt_add:
     // prolog
-    sub     sp, sp ADD_STACK_BYTECOUNT
+    sub     sp, sp, ADD_STACK_BYTECOUNT
     str     x30, [sp]
 
     // store oAddend1 on the stack
@@ -212,34 +212,96 @@ additionLoop:
     str     x0, [sp, ULCARRY]
 
 endOverflowIf1:
-    ulSum += oAddend2->aulDigits[lIndex];
+    // ulSum += oAddend2->aulDigits[lIndex];
+    ldr     x0, [sp, ULSUM]
+    ldr     x1, [sp, OADDEND1]
+    add     x1, x1, AULDIGITS
+    ldr     x2, [sp, LINDEX]
+    ldr     x1, [x1, x2, lsl longByteShift]
+    add     x0, x0, x1
+    str     x0, [sp, ULSUM]
 
-    if (ulSum >= oAddend2->aulDigits[lIndex])
-        goto endOverflowIf2; /* Check for overflow. */
-    ulCarry = 1;
+    // Check for overflow.
+    // if (ulSum >= oAddend2->aulDigits[lIndex]) goto endOverflowIf2;
+    ldr     x0, [sp, ULSUM]
+    ldr     x1, [sp, OADDEND2]
+    add     x1, x1, AULDIGITS
+    ldr     x2, [sp, LINDEX]
+    ldr     x1, [x1, x2, lsl longByteShift]
+    cmp     x0, x1
+    bhs     endOverflowIf2
+
+    // ulCarry = 1;
+    mov     x0, 1
+    str     x0, [sp, ULCARRY]
 
 endOverflowIf2:
-    oSum->aulDigits[lIndex] = ulSum;
+    // oSum->aulDigits[lIndex] = ulSum;
+    ldr     x0, [sp, OSUM]
+    add     x0, x0, AULDIGITS
+    ldr     x1, [sp, LINDEX]
+    ldr     x2, [sp, ULSUM]
+    str     x2, [x0, x1, lsl longByteShift]
 
-    lIndex++;
-    goto additionLoop;
+    // lIndex++;
+    ldr     x0, [sp, LINDEX]
+    mov     x1, 1
+    add     x0, x0, x1
+    str     x0, [sp, LINDEX]
+
+    // goto additionLoop;
+    b       additionLoop
 
 endAdditionLoop:
 
-    /* Check for a carry out of the last "column" of the addition. */
-    if (ulCarry != 1)
-        goto endCarryIf;
+    // Check for a carry out of the last "column" of the addition.
+    // if (ulCarry != 1) goto endCarryIf;
+    ldr     x0, [sp, ULCARRY]
+    mov     x1, 1
+    cmp     x0, x1
+    bne     endCarryIf
 
-    if (lSumLength != MAX_DIGITS)
-        goto endMaxIf;
-    return FALSE;
+    // if (lSumLength != MAX_DIGITS) goto endMaxIf;
+    ldr     x0, [sp, LSUMLENGTH]
+    ldr     x1, MAX_DIGITS
+    cmp     x0, x1
+    bne     endMaxIf
+
+    // return FALSE;
+    mov     x0, FALSE
+    ldr     x30, [sp]
+    add     sp, sp, ADD_STACK_BYTECOUNT
+    ret
+
+    .size BigInt_add, (. -BigInt_add)
+
 
 endMaxIf:
-    oSum->aulDigits[lSumLength] = 1;
-    lSumLength++;
+    // oSum->aulDigits[lSumLength] = 1;
+    ldr     x0, [sp, OSUM]
+    add     x0, x0, AULDIGITS
+    ldr     x1, [sp, LSUMLENGTH]    
+    mov     x2, 1
+    str     x2, [x0, x1, lsl longByteShift]
+
+    // lSumLength++;
+    ldr     x0, [sp, LSUMLENGTH]
+    mov     x1, 1
+    add     x0, x0, x1
+    str     x0, [sp, LSUMLENGTH]
 
 endCarryIf:
-    /* Set the length of the sum. */
-    oSum->lLength = lSumLength;
+    // Set the length of the sum.
+    // oSum->lLength = lSumLength;
+    ldr     x0, [sp, OSUM]
+    add     x0, x0, LLENGTH
+    ldr     x1, [sp, LSUMLENGTH]
+    str     x1, [x0]
 
-    return TRUE;
+    // return TRUE;
+    mov     x0, TRUE
+    ldr     x30, [sp]
+    add     sp, sp, ADD_STACK_BYTECOUNT
+    ret
+
+    .size BigInt_add, (. -BigInt_add)
