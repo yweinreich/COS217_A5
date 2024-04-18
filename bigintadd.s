@@ -276,7 +276,6 @@ endAdditionLoop:
 
     .size BigInt_add, (. -BigInt_add)
 
-
 endMaxIf:
     // oSum->aulDigits[lSumLength] = 1;
     ldr     x0, [sp, OSUM]
