@@ -87,6 +87,7 @@ endLargerIf:
 .equ OADDEND2, 48
 .equ OADDEND1, 56
 .equ longByteShift, 3
+.equ SIZEOFULONG, 8
 
 // structure field offsets
 .equ LLENGTH, 0
@@ -100,6 +101,9 @@ endLargerIf:
 // overflow occurred, and 1 (TRUE) otherwise.
 
 // int BigInt_add(BigInt_T oAddend1, BigInt_T oAddend2, BigInt_T oSum)
+
+    .global BigInt_add
+
 BigInt_add:
     // prolog
     sub     sp, sp, ADD_STACK_BYTECOUNT
@@ -147,16 +151,13 @@ BigInt_add:
     cmp     x0, x1
     ble     endClearIf
 
-    // memset(oSum->aulDigits, 0, MAX_DIGITS * sizeof(unsigned long));
-    ldr     x0, [sp, ULSUM]
-    bl      sizeof
-    mov     x0, x2
-    
+    // memset(oSum->aulDigits, 0, MAX_DIGITS * sizeof(unsigned long));    
     ldr     x0, [sp, OSUM]
     add     x0, x0, AULDIGITS
 
     mov     x1, 0
 
+    mov     x2, SIZEOFULONG
     mov     x3, MAX_DIGITS
     mul     x2, x2, x3
 
