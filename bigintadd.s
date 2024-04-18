@@ -215,7 +215,7 @@ additionLoop:
 endOverflowIf1:
     // ulSum += oAddend2->aulDigits[lIndex];
     ldr     x0, [sp, ULSUM]
-    ldr     x1, [sp, OADDEND1]
+    ldr     x1, [sp, OADDEND2]
     add     x1, x1, AULDIGITS
     ldr     x2, [sp, LINDEX]
     ldr     x1, [x1, x2, lsl longByteShift]
