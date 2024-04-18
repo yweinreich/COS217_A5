@@ -264,7 +264,7 @@ endAdditionLoop:
 
     // if (lSumLength != MAX_DIGITS) goto endMaxIf;
     ldr     x0, [sp, LSUMLENGTH]
-    ldr     x1, MAX_DIGITS
+    mov     x1, MAX_DIGITS
     cmp     x0, x1
     bne     endMaxIf
 
