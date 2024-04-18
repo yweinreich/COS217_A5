@@ -161,7 +161,7 @@ BigInt_add:
     mov     x3, MAX_DIGITS
     mul     x2, x2, x3
 
-    bl memset
+    bl      memset
 
 endClearIf:
 
