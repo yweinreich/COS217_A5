@@ -39,7 +39,7 @@ BigInt_larger:
     // store lLength1 on the stack
     str     x0, [sp, LLENGTH1]
 
-    // store lLength1 on the stack
+    // store lLength2 on the stack
     str     x1, [sp, LLENGTH2]
 
     // long lLarger;
@@ -78,7 +78,7 @@ endLargerIf:
 // must be a multiple of 16
 .equ ADD_STACK_BYTECOUNT, 64
 
-// parameter local variables stack offsets
+// parameter and local variable stack offsets
 .equ LSUMLENGTH, 8
 .equ LINDEX, 16
 .equ ULSUM, 24
