@@ -22,68 +22,6 @@
     .section .text
 
 // must be a multiple of 16
-.equ LARGER_STACK_BYTECOUNT, 32
-
-// stack offsets for old register values
-.equ oldx19, 8
-.equ oldx20, 16
-.equ oldx21, 24
-
-// registers for parameters and local variables
-LLENGTH1 .req x19
-LLENGTH2 .req x20
-LLARGER .req x21
-
-// Return the larger of lLength1 and lLength2.
-// static long BigInt_larger(long lLength1, long lLength2)
-BigInt_larger:
-    // prolog
-    sub     sp, sp, LARGER_STACK_BYTECOUNT
-    str     x30, [sp]
-    // store current values of x19-x21
-    str     x19, [sp, oldx19]
-    str     x20, [sp, oldx20]
-    str     x21, [sp, oldx21]
-
-    // copy parameters to the appropriate registers
-    mov     LLENGTH1, x0
-    mov     LLENGTH2, x1
-
-    // long lLarger;
-    
-    // if (lLength1 <= lLength2) goto largerElse;
-    cmp     LLENGTH1, LLENGTH2
-    ble     largerElse
-
-    // lLarger = lLength1;
-    mov     LLARGER, LLENGTH1
-
-    // goto endLargerIf;
-    b       endLargerIf
-
-largerElse:
-    // lLarger = lLength2;
-    mov     LLARGER, LLENGTH2
-
-endLargerIf:
-    // return lLarger;
-    mov     x0, LLARGER
-
-    // restore old values of x19-x21
-    ldr     x19, [sp, oldx19]
-    ldr     x20, [sp, oldx20]
-    ldr     x21, [sp, oldx21]
-    
-    // epilog
-    ldr     x30, [sp]
-    add     sp, sp, LARGER_STACK_BYTECOUNT
-    ret
-
-    .size BigInt_larger, (. - BigInt_larger)
-
-/*--------------------------------------------------------------------*/
-
-// must be a multiple of 16
 .equ ADD_STACK_BYTECOUNT, 64
 
 // stack offsets for old register values
@@ -94,6 +32,7 @@ endLargerIf:
 .equ oldx23, 40
 .equ oldx24, 48
 .equ oldx25, 56
+.equ oldx26, 64
 
 // registers for parameters and local variables
 LSUMLENGTH .req x19
@@ -156,10 +95,21 @@ BigInt_add:
     add     x1, OADDEND2, LLENGTH
     ldr     x1, [x1]
 
-    bl      BigInt_larger
+    // if (lLength1 <= lLength2) goto largerElse;
+    cmp     x0, x1
+    ble     largerElse
 
-    // store return value of BigInt_larger in lSumLength
+    // lLarger = lLength1;
     mov     LSUMLENGTH, x0
+
+    // goto endLargerIf;
+    b       endLargerIf
+
+largerElse:
+    // lLarger = lLength2;
+    mov     LSUMLENGTH, x1
+
+endLargerIf:
 
     // Clear oSum's array if necessary.
     // if (oSum->lLength <= lSumLength) goto endClearIf;
