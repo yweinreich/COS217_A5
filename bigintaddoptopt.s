@@ -122,7 +122,7 @@ endClearIf:
 
     // Perform the addition.
     // ulCarry = 0;
-    mov     ULCARRY, 0
+    // mov     ULCARRY, 0
 
     // lIndex = 0;
     mov     LINDEX, 0
@@ -133,41 +133,45 @@ endClearIf:
 
 additionLoop:
     // ulSum = ulCarry;
-    mov     ULSUM, ULCARRY
-
+    // mov     ULSUM, ULCARRY
+    bcc     noCarry
+    mov     ULSUM, 1
+    b       justCarried
+noCarry:
     // ulCarry = 0;
-    mov     ULCARRY, 0
-
+    // mov     ULCARRY, 0
+    mov     ULSUM, 0
+justCarried:
     // ulSum += oAddend1->aulDigits[lIndex];
     add     x0, OADDEND1, AULDIGITS
     ldr     x0, [x0, LINDEX, lsl longByteShift]
-    add     ULSUM, ULSUM, x0
+    adcs    ULSUM, ULSUM, x0
 
     // Check for overflow.
     // if (ulSum >= oAddend1->aulDigits[lIndex]) goto endOverflowIf1;
-    add     x0, OADDEND1, AULDIGITS
-    ldr     x0, [x0, LINDEX, lsl longByteShift]
-    cmp     ULSUM, x0
-    bhs     endOverflowIf1
-
+    // add     x0, OADDEND1, AULDIGITS
+    // ldr     x0, [x0, LINDEX, lsl longByteShift]
+    // cmp     ULSUM, x0
+    // bhs     endOverflowIf1
+    
     // ulCarry = 1;
-    mov     ULCARRY, 1
+    // mov     ULCARRY, 1
 
 endOverflowIf1:
     // ulSum += oAddend2->aulDigits[lIndex];
     add     x0, OADDEND2, AULDIGITS
     ldr     x0, [x0, LINDEX, lsl longByteShift]
-    add     ULSUM, ULSUM, x0
+    adcs     ULSUM, ULSUM, x0
 
     // Check for overflow.
     // if (ulSum >= oAddend2->aulDigits[lIndex]) goto endOverflowIf2;
-    add     x0, OADDEND2, AULDIGITS
-    ldr     x0, [x0, LINDEX, lsl longByteShift]
-    cmp     ULSUM, x0
-    bhs     endOverflowIf2
+    // add     x0, OADDEND2, AULDIGITS
+    // ldr     x0, [x0, LINDEX, lsl longByteShift]
+    // cmp     ULSUM, x0
+    // bhs     endOverflowIf2
 
     // ulCarry = 1;
-    mov     ULCARRY, 1
+    // mov     ULCARRY, 1
 
 endOverflowIf2:
     // oSum->aulDigits[lIndex] = ulSum;
@@ -185,8 +189,9 @@ endAdditionLoop:
 
     // Check for a carry out of the last "column" of the addition.
     // if (ulCarry != 1) goto endCarryIf;
-    cmp     ULCARRY, 1
-    bne     endCarryIf
+    // cmp     ULCARRY, 1
+    // bne     endCarryIf
+    bcc     endCarryIf
 
     // if (lSumLength != MAX_DIGITS) goto endMaxIf;
     mov     x1, MAX_DIGITS
