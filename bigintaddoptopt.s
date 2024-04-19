@@ -134,8 +134,14 @@ endClearIf:
 additionLoop:
     // ulSum = ulCarry;
     // mov     ULSUM, ULCARRY
-    bcc     noCarry
-    mov     ULSUM, 1
+
+
+    //bcc     noCarry
+    //mov     ULSUM, 1
+
+    // bad solution to try and preserve C flag. did not work.
+    mov     ULSUM, ULCARRY
+    mov     ULCARRY, 0
 
 noCarry:
     // ulCarry = 0;
@@ -162,11 +168,10 @@ endOverflowIf1:
     ldr     x0, [x0, LINDEX, lsl longByteShift]
     bcs     addNoFlag
     adcs    ULSUM, ULSUM, x0
-    b       continue
+    b       endOverflowIf2
 
 addNoFlag:
     add     ULSUM, ULSUM, x0
-continue:
     // Check for overflow.
     // if (ulSum >= oAddend2->aulDigits[lIndex]) goto endOverflowIf2;
     // add     x0, OADDEND2, AULDIGITS
@@ -185,6 +190,11 @@ endOverflowIf2:
     // lIndex++;
     add     LINDEX, LINDEX, 1
 
+    // super bandaid solution to preserve C flag
+    bcc     isZero
+    mov     ULCARRY, 1
+
+isZero:
     // if (lIndex < lSumLength) goto additionLoop;
     cmp     LINDEX, LSUMLENGTH
     blt     additionLoop
