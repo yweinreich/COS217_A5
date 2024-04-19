@@ -34,13 +34,14 @@
 .equ oldx25, 56
 
 // registers for parameters and local variables
-LSUMLENGTH .req x19
-LINDEX .req x20
-ULSUM .req x21
-ULCARRY .req x22
-OSUM .req x23
-OADDEND2 .req x24
-OADDEND1 .req x25
+// using caller saved registers so we don't need to save the values
+LSUMLENGTH .req x9
+LINDEX .req x10
+ULSUM .req x11
+ULCARRY .req x12
+OSUM .req x13
+OADDEND2 .req x14
+OADDEND1 .req x15
 
 .equ longByteShift, 3
 .equ SIZEOFULONG, 8
@@ -63,15 +64,6 @@ BigInt_add:
     // prolog
     sub     sp, sp, ADD_STACK_BYTECOUNT
     str     x30, [sp]
-
-    // store current values of x19-x25
-    str     x19, [sp, oldx19]
-    str     x20, [sp, oldx20]
-    str     x21, [sp, oldx21]
-    str     x22, [sp, oldx22]
-    str     x23, [sp, oldx23]
-    str     x24, [sp, oldx24]
-    str     x25, [sp, oldx25]
 
     // store parameters in the appropriate registers
     mov     OADDEND1, x0
@@ -237,15 +229,6 @@ endCarryIf:
 
     // return TRUE;
     mov     x0, TRUE
-
-    // restore old values of x19-x25
-    ldr     x19, [sp, oldx19]
-    ldr     x20, [sp, oldx20]
-    ldr     x21, [sp, oldx21]
-    ldr     x22, [sp, oldx22]
-    ldr     x23, [sp, oldx23]
-    ldr     x24, [sp, oldx24]
-    ldr     x25, [sp, oldx25]
 
     // epilog
     ldr     x30, [sp]
