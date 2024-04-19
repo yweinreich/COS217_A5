@@ -126,6 +126,8 @@ BigInt_add:
     // prolog
     sub     sp, sp, ADD_STACK_BYTECOUNT
     str     x30, [sp]
+
+    // store current values of x19-x25
     str     x19, [sp, oldx19]
     str     x20, [sp, oldx20]
     str     x21, [sp, oldx21]
@@ -256,6 +258,8 @@ endAdditionLoop:
 
     // return FALSE;
     mov     x0, FALSE
+
+    // restore old values of x19-x25
     ldr     x19, [sp, oldx19]
     ldr     x20, [sp, oldx20]
     ldr     x21, [sp, oldx21]
@@ -263,6 +267,8 @@ endAdditionLoop:
     ldr     x23, [sp, oldx23]
     ldr     x24, [sp, oldx24]
     ldr     x25, [sp, oldx25]
+
+    // epilog
     ldr     x30, [sp]
     add     sp, sp, ADD_STACK_BYTECOUNT
     ret
@@ -287,6 +293,8 @@ endCarryIf:
 
     // return TRUE;
     mov     x0, TRUE
+
+    // restore old values of x19-x25
     ldr     x19, [sp, oldx19]
     ldr     x20, [sp, oldx20]
     ldr     x21, [sp, oldx21]
@@ -294,6 +302,8 @@ endCarryIf:
     ldr     x23, [sp, oldx23]
     ldr     x24, [sp, oldx24]
     ldr     x25, [sp, oldx25]
+
+    // epilog
     ldr     x30, [sp]
     add     sp, sp, ADD_STACK_BYTECOUNT
     ret
