@@ -137,8 +137,8 @@ endClearIf:
 
 additionLoop:
     // ulSum = ulCarry;
-    mov ULSUM, 0
-    b noCarry
+    mov     ULSUM, 0
+    b       noCarry
 
 yesCarry:
     // set carry flag to 0
