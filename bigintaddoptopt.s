@@ -40,6 +40,9 @@ ULSUM .req x21
 OSUM .req x22
 OADDEND2 .req x23
 OADDEND1 .req x24
+OA1DIGITS .req x9
+OA2DIGITS .req x10
+OSUMDIGITS .req x11
 
 .equ longByteShift, 3
 .equ SIZEOFULONG, 8
@@ -136,9 +139,9 @@ endClearIf:
     bge     endNoCarry
 
 // optimize loop by storing these values in registers
-    add     x9, OADDEND1, AULDIGITS
-    add     x10, OADDEND2, AULDIGITS
-    add     x11, OSUM, AULDIGITS
+    add     OA1DIGITS, OADDEND1, AULDIGITS
+    add     OA2DIGITS, OADDEND2, AULDIGITS
+    add     OSUMDIGITS, OSUM, AULDIGITS
 
 additionLoop:
     // ulSum = ulCarry;
@@ -151,14 +154,14 @@ yesCarry:
 
 noCarry:
     // ulSum += oAddend1->aulDigits[lIndex];
-    ldr     x0, [x9, LINDEX, lsl longByteShift]
+    ldr     x0, [OA1DIGITS, LINDEX, lsl longByteShift]
     adcs    ULSUM, ULSUM, x0
 
     // Automatically notes overflow with carry flag
 
 endOverflowIf1:
     // ulSum += oAddend2->aulDigits[lIndex];
-    ldr     x0, [x10, LINDEX, lsl longByteShift]
+    ldr     x0, [OA2DIGITS, LINDEX, lsl longByteShift]
     // if the carry flag is already set to 1, branch to regular addition
     // to avoid overwriting it
     bcs     add2NoFlag
@@ -173,7 +176,7 @@ add2NoFlag:
 
 endOverflowIf2:
     // oSum->aulDigits[lIndex] = ulSum;
-    str     ULSUM, [x11, LINDEX, lsl longByteShift]
+    str     ULSUM, [OSUMDIGITS, LINDEX, lsl longByteShift]
 
     // lIndex++;
     add     LINDEX, LINDEX, 1
