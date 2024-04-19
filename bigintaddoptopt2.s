@@ -187,10 +187,11 @@ endClearIf:
     // lIndex = 0;
     mov     LINDEX, 0
 
-additionLoop:
     // if (lIndex >= lSumLength) goto endAdditionLoop;
     cmp     LINDEX, LSUMLENGTH
     bge     endAdditionLoop
+    
+additionLoop:
 
     // ulSum = ulCarry;
     mov     ULSUM, ULCARRY
@@ -237,8 +238,9 @@ endOverflowIf2:
     // lIndex++;
     add     LINDEX, LINDEX, 1
 
-    // goto additionLoop;
-    b       additionLoop
+    // if (lIndex < lSumLength) goto additionLoop;
+    cmp     LINDEX, LSUMLENGTH
+    blt     additionLoop
 
 endAdditionLoop:
 
