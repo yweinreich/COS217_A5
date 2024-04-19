@@ -69,10 +69,12 @@ endLargerIf:
     // return lLarger;
     mov     x0, LLARGER
 
-    // epilog
+    // restore old values of x19-x21
     ldr     x19, [sp, oldx19]
     ldr     x20, [sp, oldx20]
     ldr     x21, [sp, oldx21]
+    
+    // epilog
     ldr     x30, [sp]
     add     sp, sp, LARGER_STACK_BYTECOUNT
     ret
