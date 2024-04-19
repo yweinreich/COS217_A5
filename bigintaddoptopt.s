@@ -135,6 +135,11 @@ endClearIf:
     cmp     LINDEX, LSUMLENGTH
     bge     endNoCarry
 
+// optimize loop by storing these values in registers
+    add     x9, OADDEND1, AULDIGITS
+    add     x10, OADDEND2, AULDIGITS
+    add     x11, OSUM, AULDIGITS
+
 additionLoop:
     // ulSum = ulCarry;
     mov     ULSUM, 0
@@ -146,16 +151,14 @@ yesCarry:
 
 noCarry:
     // ulSum += oAddend1->aulDigits[lIndex];
-    add     x0, OADDEND1, AULDIGITS
-    ldr     x0, [x0, LINDEX, lsl longByteShift]
+    ldr     x0, [x9, LINDEX, lsl longByteShift]
     adcs    ULSUM, ULSUM, x0
 
     // Automatically notes overflow with carry flag
 
 endOverflowIf1:
     // ulSum += oAddend2->aulDigits[lIndex];
-    add     x0, OADDEND2, AULDIGITS
-    ldr     x0, [x0, LINDEX, lsl longByteShift]
+    ldr     x0, [x10, LINDEX, lsl longByteShift]
     // if the carry flag is already set to 1, branch to regular addition
     // to avoid overwriting it
     bcs     add2NoFlag
@@ -170,8 +173,7 @@ add2NoFlag:
 
 endOverflowIf2:
     // oSum->aulDigits[lIndex] = ulSum;
-    add     x0, OSUM, AULDIGITS
-    str     ULSUM, [x0, LINDEX, lsl longByteShift]
+    str     ULSUM, [x11, LINDEX, lsl longByteShift]
 
     // lIndex++;
     add     LINDEX, LINDEX, 1
