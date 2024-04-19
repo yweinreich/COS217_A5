@@ -46,7 +46,6 @@ OADDEND1 .req x25
 .equ SIZEOFULONG, 8
 
 // structure field offsets
-.equ LLENGTH, 0
 .equ AULDIGITS, 8
 
 // enumerated constants
@@ -136,11 +135,11 @@ endClearIf:
     // lIndex = 0;
     mov     LINDEX, 0
 
-additionLoop:
-    // if (lIndex >= lSumLength) goto endAdditionLoop;
+// if (lIndex >= lSumLength) goto endAdditionLoop;
     cmp     LINDEX, LSUMLENGTH
     bge     endAdditionLoop
 
+additionLoop:
     // ulSum = ulCarry;
     mov     ULSUM, ULCARRY
 
@@ -186,9 +185,10 @@ endOverflowIf2:
     // lIndex++;
     add     LINDEX, LINDEX, 1
 
-    // goto additionLoop;
-    b       additionLoop
-
+    // if (lIndex < lSumLength) goto additionLoop;
+    cmp     LINDEX, LSUMLENGTH
+    blt     additionLoop
+ 
 endAdditionLoop:
 
     // Check for a carry out of the last "column" of the addition.
@@ -232,8 +232,8 @@ endMaxIf:
 endCarryIf:
     // Set the length of the sum.
     // oSum->lLength = lSumLength;
-    add     x0, OSUM, LLENGTH
-    str     LSUMLENGTH, [x0]
+    // lLength is the first element of oSum (0 offset)
+    str     LSUMLENGTH, [OSUM]
 
     // return TRUE;
     mov     x0, TRUE
