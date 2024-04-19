@@ -35,13 +35,13 @@
 
 // registers for parameters and local variables
 // using caller saved registers so we don't need to save the values
-LSUMLENGTH .req x9
-LINDEX .req x10
-ULSUM .req x11
-ULCARRY .req x12
-OSUM .req x13
-OADDEND2 .req x14
-OADDEND1 .req x15
+LSUMLENGTH .req x19
+LINDEX .req x20
+ULSUM .req x21
+ULCARRY .req x22
+OSUM .req x23
+OADDEND2 .req x24
+OADDEND1 .req x25
 
 .equ longByteShift, 3
 .equ SIZEOFULONG, 8
@@ -64,6 +64,15 @@ BigInt_add:
     // prolog
     sub     sp, sp, ADD_STACK_BYTECOUNT
     str     x30, [sp]
+
+    // store current values of x19-x25
+    str     x19, [sp, oldx19]
+    str     x20, [sp, oldx20]
+    str     x21, [sp, oldx21]
+    str     x22, [sp, oldx22]
+    str     x23, [sp, oldx23]
+    str     x24, [sp, oldx24]
+    str     x25, [sp, oldx25]
 
     // store parameters in the appropriate registers
     mov     OADDEND1, x0
@@ -121,66 +130,46 @@ endLargerIf:
 endClearIf:
 
     // Perform the addition.
-    // ulCarry = 0;
-    // mov     ULCARRY, 0
 
     // lIndex = 0;
     mov     LINDEX, 0
 
-// if (lIndex >= lSumLength) goto endAdditionLoop;
+// if (lIndex >= lSumLength) goto endNoCarry;
     cmp     LINDEX, LSUMLENGTH
-    bge     endAdditionLoop
+    bge     endNoCarry
 
 additionLoop:
     // ulSum = ulCarry;
-    // mov     ULSUM, ULCARRY
+    mov ULSUM, 0
+    b noCarry
 
-
-    //bcc     noCarry
-    //mov     ULSUM, 1
-
-    // bad solution to try and preserve C flag. did not work.
-    mov     ULSUM, ULCARRY
-    mov     ULCARRY, 0
+yesCarry:
+    // set carry flag to 0
+    mov     ULSUM, 1
 
 noCarry:
-    // ulCarry = 0;
-    // mov     ULCARRY, 0
-
     // ulSum += oAddend1->aulDigits[lIndex];
     add     x0, OADDEND1, AULDIGITS
     ldr     x0, [x0, LINDEX, lsl longByteShift]
     adcs    ULSUM, ULSUM, x0
 
-    // Check for overflow.
-    // if (ulSum >= oAddend1->aulDigits[lIndex]) goto endOverflowIf1;
-    // add     x0, OADDEND1, AULDIGITS
-    // ldr     x0, [x0, LINDEX, lsl longByteShift]
-    // cmp     ULSUM, x0
-    // bhs     endOverflowIf1
-    
-    // ulCarry = 1;
-    // mov     ULCARRY, 1
+    // Automatically notes overflow with carry flag
 
 endOverflowIf1:
     // ulSum += oAddend2->aulDigits[lIndex];
     add     x0, OADDEND2, AULDIGITS
     ldr     x0, [x0, LINDEX, lsl longByteShift]
-    bcs     addNoFlag
+    // if the carry flag is already set to 1, branch to regular addition
+    // to avoid overwriting it
+    bcs     add2NoFlag
     adcs    ULSUM, ULSUM, x0
+
+    // Automatically notes overflow with carry flag
+
     b       endOverflowIf2
 
-addNoFlag:
+add2NoFlag:
     add     ULSUM, ULSUM, x0
-    // Check for overflow.
-    // if (ulSum >= oAddend2->aulDigits[lIndex]) goto endOverflowIf2;
-    // add     x0, OADDEND2, AULDIGITS
-    // ldr     x0, [x0, LINDEX, lsl longByteShift]
-    // cmp     ULSUM, x0
-    // bhs     endOverflowIf2
-
-    // ulCarry = 1;
-    // mov     ULCARRY, 1
 
 endOverflowIf2:
     // oSum->aulDigits[lIndex] = ulSum;
@@ -190,23 +179,21 @@ endOverflowIf2:
     // lIndex++;
     add     LINDEX, LINDEX, 1
 
-    // super bandaid solution to preserve C flag
-    bcc     isZero
-    mov     ULCARRY, 1
+    bcc     carry0
+    // do comparisons and branch knowing that carry = 1
+    // if (lIndex < lSumLength) goto additionLoop;
+    cmp     LINDEX, LSUMLENGTH
+    blt     yesCarry
+    b       endWithCarry
 
-isZero:
+carry0:
+    // do comparisons and branch knowing that carry = 0
     // if (lIndex < lSumLength) goto additionLoop;
     cmp     LINDEX, LSUMLENGTH
     blt     additionLoop
- 
-endAdditionLoop:
+    b       endNoCarry
 
-    // Check for a carry out of the last "column" of the addition.
-    // if (ulCarry != 1) goto endCarryIf;
-    // cmp     ULCARRY, 1
-    // bne     endCarryIf
-    bcc     endCarryIf
-
+endWithCarry:
     // if (lSumLength != MAX_DIGITS) goto endMaxIf;
     mov     x1, MAX_DIGITS
     cmp     LSUMLENGTH, x1
@@ -240,7 +227,7 @@ endMaxIf:
     // lSumLength++;
     add     LSUMLENGTH, LSUMLENGTH, 1
 
-endCarryIf:
+endNoCarry:
     // Set the length of the sum.
     // oSum->lLength = lSumLength;
     // lLength is the first element of oSum (0 offset)
@@ -248,6 +235,15 @@ endCarryIf:
 
     // return TRUE;
     mov     x0, TRUE
+
+    // restore old values of x19-x25
+    ldr     x19, [sp, oldx19]
+    ldr     x20, [sp, oldx20]
+    ldr     x21, [sp, oldx21]
+    ldr     x22, [sp, oldx22]
+    ldr     x23, [sp, oldx23]
+    ldr     x24, [sp, oldx24]
+    ldr     x25, [sp, oldx25]
 
     // epilog
     ldr     x30, [sp]
