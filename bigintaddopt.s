@@ -103,7 +103,6 @@ ULCARRY .req x22
 OSUM .req x23
 OADDEND2 .req x24
 OADDEND1 .req x25
-ONE .req x9
 
 .equ longByteShift, 3
 .equ SIZEOFULONG, 8
@@ -141,9 +140,6 @@ BigInt_add:
     mov     OADDEND1, x0
     mov     OADDEND2, x1
     mov     OSUM, x2
-    
-    // store 1 in its own register
-    mov     ONE, 1
 
 //  unsigned long ulCarry;
 //  unsigned long ulSum;
@@ -239,7 +235,7 @@ endOverflowIf2:
     str     ULSUM, [x0, LINDEX, lsl longByteShift]
 
     // lIndex++;
-    add     LINDEX, LINDEX, ONE
+    add     LINDEX, LINDEX, 1
 
     // goto additionLoop;
     b       additionLoop
@@ -248,7 +244,7 @@ endAdditionLoop:
 
     // Check for a carry out of the last "column" of the addition.
     // if (ulCarry != 1) goto endCarryIf;
-    cmp     ULCARRY, ONE
+    cmp     ULCARRY, 1
     bne     endCarryIf
 
     // if (lSumLength != MAX_DIGITS) goto endMaxIf;
@@ -278,10 +274,11 @@ endAdditionLoop:
 endMaxIf:
     // oSum->aulDigits[lSumLength] = 1;
     add     x0, OSUM, AULDIGITS
-    str     ONE, [x0, LSUMLENGTH, lsl longByteShift]
+    mov     x1, 1
+    str     x1, [x0, LSUMLENGTH, lsl longByteShift]
 
     // lSumLength++;
-    add     LSUMLENGTH, LSUMLENGTH, ONE
+    add     LSUMLENGTH, LSUMLENGTH, 1
 
 endCarryIf:
     // Set the length of the sum.
