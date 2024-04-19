@@ -31,17 +31,15 @@
 .equ oldx22, 32
 .equ oldx23, 40
 .equ oldx24, 48
-.equ oldx25, 56
 
 // registers for parameters and local variables
 // using caller saved registers so we don't need to save the values
 LSUMLENGTH .req x19
 LINDEX .req x20
 ULSUM .req x21
-ULCARRY .req x22
-OSUM .req x23
-OADDEND2 .req x24
-OADDEND1 .req x25
+OSUM .req x22
+OADDEND2 .req x23
+OADDEND1 .req x24
 
 .equ longByteShift, 3
 .equ SIZEOFULONG, 8
@@ -72,7 +70,6 @@ BigInt_add:
     str     x22, [sp, oldx22]
     str     x23, [sp, oldx23]
     str     x24, [sp, oldx24]
-    str     x25, [sp, oldx25]
 
     // store parameters in the appropriate registers
     mov     OADDEND1, x0
@@ -209,7 +206,6 @@ endWithCarry:
     ldr     x22, [sp, oldx22]
     ldr     x23, [sp, oldx23]
     ldr     x24, [sp, oldx24]
-    ldr     x25, [sp, oldx25]
 
     // epilog
     ldr     x30, [sp]
@@ -243,7 +239,6 @@ endNoCarry:
     ldr     x22, [sp, oldx22]
     ldr     x23, [sp, oldx23]
     ldr     x24, [sp, oldx24]
-    ldr     x25, [sp, oldx25]
 
     // epilog
     ldr     x30, [sp]
