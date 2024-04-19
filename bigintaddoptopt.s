@@ -136,12 +136,11 @@ additionLoop:
     // mov     ULSUM, ULCARRY
     bcc     noCarry
     mov     ULSUM, 1
-    b       justCarried
+
 noCarry:
     // ulCarry = 0;
     // mov     ULCARRY, 0
-    mov     ULSUM, 0
-justCarried:
+
     // ulSum += oAddend1->aulDigits[lIndex];
     add     x0, OADDEND1, AULDIGITS
     ldr     x0, [x0, LINDEX, lsl longByteShift]
@@ -161,8 +160,13 @@ endOverflowIf1:
     // ulSum += oAddend2->aulDigits[lIndex];
     add     x0, OADDEND2, AULDIGITS
     ldr     x0, [x0, LINDEX, lsl longByteShift]
-    adcs     ULSUM, ULSUM, x0
+    bcs     addNoFlag
+    adcs    ULSUM, ULSUM, x0
+    b       continue
 
+addNoFlag:
+    add     ULSUM, ULSUM, x0
+continue:
     // Check for overflow.
     // if (ulSum >= oAddend2->aulDigits[lIndex]) goto endOverflowIf2;
     // add     x0, OADDEND2, AULDIGITS
