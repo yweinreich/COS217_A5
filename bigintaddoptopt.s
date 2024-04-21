@@ -198,9 +198,8 @@ carry0:
 
 endWithCarry:
     // if (lSumLength != MAX_DIGITS) goto endMaxIf;
-    mov     x1, MAX_DIGITS
-    cmp     LSUMLENGTH, x1
-    bne     endMaxIf
+    sub     x1, LSUMLENGTH, MAX_DIGITS
+    cbnz    x1, endMaxIf
 
     // return FALSE;
     // FALSE = 0
