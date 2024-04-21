@@ -120,7 +120,7 @@ endLargerIf:
     add     x0, OSUM, AULDIGITS
 
     // set x1 to 0
-    and     x1, xzr, xzr
+    eor     x1, x1, x1
 
     mov     x2, SIZEOFULONG
     mov     x3, MAX_DIGITS
@@ -133,7 +133,7 @@ endClearIf:
     // Perform the addition.
 
     // lIndex = 0;
-    and     LINDEX, xzr, xzr
+    eor     LINDEX, LINDEX, LINDEX
 
 // if (lIndex >= lSumLength) goto endNoCarry;
     cmp     LINDEX, LSUMLENGTH
@@ -147,7 +147,7 @@ endClearIf:
 
 additionLoop:
     // ulSum = ulCarry;
-    and     ULSUM, xzr, xzr
+    eor     ULSUM, ULSUM, ULSUM
     b       noCarry
 
 yesCarry:
@@ -203,7 +203,7 @@ endWithCarry:
 
     // return FALSE;
     // FALSE = 0
-    and     x0, xzr, xzr
+    eor     x0, x0, x0
 
     // restore old values of x19-x25
     ldr     x19, [sp, oldx19]
@@ -236,7 +236,7 @@ endNoCarry:
 
     // return TRUE;
     // x12 = 1 = TRUE
-    add     x0, xzr, x12
+    orr     x0, xzr, x12
 
     // restore old values of x19-x25
     ldr     x19, [sp, oldx19]
