@@ -75,9 +75,9 @@ BigInt_add:
     str     x24, [sp, oldx24]
 
     // store parameters in the appropriate registers
-    mov     OADDEND1, x0
-    mov     OADDEND2, x1
-    mov     OSUM, x2
+    add     OADDEND1, xzr, x0
+    add     OADDEND2, xzr, x1
+    add     OSUM, xzr, x2
 
 //  unsigned long ulCarry;
 //  unsigned long ulSum;
@@ -97,14 +97,14 @@ BigInt_add:
     ble     largerElse
 
     // lLarger = lLength1;
-    mov     LSUMLENGTH, x0
+    add     LSUMLENGTH, xzr, x0
 
     // goto endLargerIf;
     b       endLargerIf
 
 largerElse:
     // lLarger = lLength2;
-    mov     LSUMLENGTH, x1
+    add     LSUMLENGTH, xzr, x1
 
 endLargerIf:
 
@@ -119,7 +119,8 @@ endLargerIf:
     // memset(oSum->aulDigits, 0, MAX_DIGITS * sizeof(unsigned long));    
     add     x0, OSUM, AULDIGITS
 
-    mov     x1, 0
+    // set x1 to 0
+    sub     x1, x1, x1
 
     mov     x2, SIZEOFULONG
     mov     x3, MAX_DIGITS
@@ -132,7 +133,7 @@ endClearIf:
     // Perform the addition.
 
     // lIndex = 0;
-    mov     LINDEX, 0
+    sub     LINDEX, LINDEX, LINDEX
 
 // if (lIndex >= lSumLength) goto endNoCarry;
     cmp     LINDEX, LSUMLENGTH
@@ -142,15 +143,15 @@ endClearIf:
     add     OA1DIGITS, OADDEND1, AULDIGITS
     add     OA2DIGITS, OADDEND2, AULDIGITS
     add     OSUMDIGITS, OSUM, AULDIGITS
+    mov     x12, 1
 
 additionLoop:
     // ulSum = ulCarry;
-    mov     ULSUM, 0
+    sub     ULSUM, ULSUM, ULSUM
     b       noCarry
 
 yesCarry:
-    // set carry flag to 0
-    mov     ULSUM, 1
+    add     ULSUM, xzr, x12
 
 noCarry:
     // ulSum += oAddend1->aulDigits[lIndex];
@@ -179,7 +180,7 @@ endOverflowIf2:
     str     ULSUM, [OSUMDIGITS, LINDEX, lsl longByteShift]
 
     // lIndex++;
-    add     LINDEX, LINDEX, 1
+    add     LINDEX, LINDEX, x12
 
     bcc     carry0
     // do comparisons and branch knowing that carry = 1
@@ -202,7 +203,8 @@ endWithCarry:
     bne     endMaxIf
 
     // return FALSE;
-    mov     x0, FALSE
+    // FALSE = 0
+    sub     x0, x0, x0
 
     // restore old values of x19-x25
     ldr     x19, [sp, oldx19]
@@ -222,11 +224,10 @@ endWithCarry:
 endMaxIf:
     // oSum->aulDigits[lSumLength] = 1;
     add     x0, OSUM, AULDIGITS
-    mov     x1, 1
-    str     x1, [x0, LSUMLENGTH, lsl longByteShift]
+    str     x12, [x0, LSUMLENGTH, lsl longByteShift]
 
     // lSumLength++;
-    add     LSUMLENGTH, LSUMLENGTH, 1
+    add     LSUMLENGTH, LSUMLENGTH, x12
 
 endNoCarry:
     // Set the length of the sum.
@@ -235,7 +236,8 @@ endNoCarry:
     str     LSUMLENGTH, [OSUM]
 
     // return TRUE;
-    mov     x0, TRUE
+    // x12 = 1 = TRUE
+    add     x0, xzr, x12
 
     // restore old values of x19-x25
     ldr     x19, [sp, oldx19]
