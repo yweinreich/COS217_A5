@@ -64,15 +64,16 @@ OSUMDIGITS .req x11
 BigInt_add:
     // prolog
     sub     sp, sp, ADD_STACK_BYTECOUNT
+    prfm    PSTL1KEEP, [sp]
     str     x30, [sp]
 
-    // store current values of x19-x25
-    str     x19, [sp, oldx19]
-    str     x20, [sp, oldx20]
-    str     x21, [sp, oldx21]
-    str     x22, [sp, oldx22]
-    str     x23, [sp, oldx23]
+    // store current values of x19-x24
     str     x24, [sp, oldx24]
+    str     x23, [sp, oldx23]
+    str     x22, [sp, oldx22]
+    str     x21, [sp, oldx21]
+    str     x20, [sp, oldx20]
+    str     x19, [sp, oldx19]
 
     // store parameters in the appropriate registers
     add     OADDEND1, xzr, x0
@@ -194,10 +195,12 @@ carry0:
     // if (lIndex < lSumLength) goto additionLoop;
     cmp     LINDEX, LSUMLENGTH
     blt     additionLoop
+    prfm    PSTL1KEEP, [OSUM]
     b       endNoCarry
 
 endWithCarry:
     // if (lSumLength != MAX_DIGITS) goto endMaxIf;
+    prfm    PLDL1KEEP, [sp, oldx19]
     sub     x1, LSUMLENGTH, MAX_DIGITS
     cbnz    x1, endMaxIf
 
@@ -205,7 +208,7 @@ endWithCarry:
     // FALSE = 0
     eor     x0, x0, x0
 
-    // restore old values of x19-x25
+    // restore old values of x19-x24
     ldr     x19, [sp, oldx19]
     ldr     x20, [sp, oldx20]
     ldr     x21, [sp, oldx21]
@@ -214,6 +217,7 @@ endWithCarry:
     ldr     x24, [sp, oldx24]
 
     // epilog
+    prfm    PLDL1STRM, [sp]
     ldr     x30, [sp]
     add     sp, sp, ADD_STACK_BYTECOUNT
     ret
@@ -247,6 +251,7 @@ endNoCarry:
     ldr     x24, [sp, oldx24]
 
     // epilog
+    prfm    PLDL1STRM, [sp]
     ldr     x30, [sp]
     add     sp, sp, ADD_STACK_BYTECOUNT
     ret
