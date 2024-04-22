@@ -21,6 +21,11 @@
 //--------------------------------------------------------------------
     .section .text
 
+
+// Assign the sum of oAddend1 and oAddend2 to oSum.  oSum should be
+// distinct from oAddend1 and oAddend2.  Return 0 (FALSE) if an
+// overflow occurred, and 1 (TRUE) otherwise.
+
 // must be a multiple of 16
 .equ ADD_STACK_BYTECOUNT, 64
 
@@ -52,10 +57,6 @@ OSUMDIGITS .req x11
 
 // enumerated constants
 .equ MAX_DIGITS, 32768
-
-// Assign the sum of oAddend1 and oAddend2 to oSum.  oSum should be
-// distinct from oAddend1 and oAddend2.  Return 0 (FALSE) if an
-// overflow occurred, and 1 (TRUE) otherwise.
 
 // int BigInt_add(BigInt_T oAddend1, BigInt_T oAddend2, BigInt_T oSum)
 

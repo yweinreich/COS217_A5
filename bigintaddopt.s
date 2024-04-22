@@ -21,6 +21,7 @@
 //--------------------------------------------------------------------
     .section .text
 
+// Return the larger of lLength1 and lLength2.
 // must be a multiple of 16
 .equ LARGER_STACK_BYTECOUNT, 32
 
@@ -34,7 +35,6 @@ LLENGTH1 .req x19
 LLENGTH2 .req x20
 LLARGER .req x21
 
-// Return the larger of lLength1 and lLength2.
 // static long BigInt_larger(long lLength1, long lLength2)
 BigInt_larger:
     // prolog
@@ -83,6 +83,10 @@ endLargerIf:
 
 /*--------------------------------------------------------------------*/
 
+// Assign the sum of oAddend1 and oAddend2 to oSum.  oSum should be
+// distinct from oAddend1 and oAddend2.  Return 0 (FALSE) if an
+// overflow occurred, and 1 (TRUE) otherwise.
+
 // must be a multiple of 16
 .equ ADD_STACK_BYTECOUNT, 64
 
@@ -113,10 +117,6 @@ OADDEND1 .req x25
 
 // enumerated constants
 .equ MAX_DIGITS, 32768
-
-// Assign the sum of oAddend1 and oAddend2 to oSum.  oSum should be
-// distinct from oAddend1 and oAddend2.  Return 0 (FALSE) if an
-// overflow occurred, and 1 (TRUE) otherwise.
 
 // int BigInt_add(BigInt_T oAddend1, BigInt_T oAddend2, BigInt_T oSum)
 
