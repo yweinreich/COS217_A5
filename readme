@@ -3,12 +3,12 @@ Assignment 5 readme File
 ------------------------------------------------------------------------
 Student 1: What is your name?
 
-
+Ariella Pressner
 
 ------------------------------------------------------------------------
 Student 2: What is your name?
 
-
+Jonathan Weinreich
 
 ------------------------------------------------------------------------
 Student 1: What authorized sources of information did you use to
@@ -17,7 +17,14 @@ information given in the "Policies" web page (also available on armlab
 in the file ~cos217/AuthorizedSourcesList ) to this section of the
 readme file, and edit it as appropriate.
 
-
+The course's lectures.
+The course's precepts.
+The course's website.
+Documents that are referenced directly by the course's website. Such
+documents include the course's lecture slides and precept handouts.
+The course's current staff members outside of class time through 
+office hours.
+The course's current staff members outside of class time through Ed.
 
 ------------------------------------------------------------------------
 Student 2: What authorized sources of information did you use to
@@ -26,7 +33,15 @@ information given in the "Policies" web page (also available on armlab
 in the file ~cos217/AuthorizedSourcesList ) to this section of the
 readme file, and edit it as appropriate.
 
-
+The course's lectures.
+The course's precepts.
+The course's website.
+Documents that are referenced directly by the course's website. Such
+documents include the course's lecture slides and precept handouts.
+The course's current staff members outside of class time through 
+office hours.
+The course's current staff members outside of class time through Ed.
+Current Intro Lab TAs through visits to the Intro COS Lab.
 
 ------------------------------------------------------------------------
 Student 1: What unauthorized sources of information did you use to
@@ -40,7 +55,7 @@ nature of the interaction, may additionally require the interaction
 being reported to the Committee on Discipline. Write "None" if you used
 no unauthorized sources of information.
 
-
+None.
 
 ------------------------------------------------------------------------
 Student 2: What unauthorized sources of information did you use to
@@ -54,13 +69,14 @@ nature of the interaction, may additionally require the interaction
 being reported to the Committee on Discipline. Write "None" if you used
 no unauthorized sources of information.
 
-
+None.
 
 ------------------------------------------------------------------------
 Student 1: What is your assessment of the assignment? Was it helpful?
 Was it fun?
 
-
+This assignment helped me learn assembly language. It was also helpful
+for understanding flattened C code and gdb for assembly code.
 
 ------------------------------------------------------------------------
 Student 2: What is your assessment of the assignment? Was it helpful?
@@ -79,6 +95,9 @@ particular, what bugs are in your submission?
 What is your mywc program test plan?
 
 We created several tests to check that our code works as expected.
+These include basic tests as well as more complex ones to help spot
+bugs and catch corner cases.
+
 Boundary tests:
 mywcEmpty.txt - an empty file. Ensures that all counts are 0 in the
 case of an empty input file.
