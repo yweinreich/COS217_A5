@@ -48,6 +48,7 @@ OADDEND1 .req x24
 OA1DIGITS .req x9
 OA2DIGITS .req x10
 OSUMDIGITS .req x11
+ONE .req x12
 
 .equ longByteShift, 3
 .equ SIZEOFULONG, 8
@@ -124,14 +125,8 @@ endLargerIf:
     // set x1 to 0
     eor     x1, x1, x1
 
-    // changing, don't even think helps...
-
-    //mov     x2, SIZEOFULONG
-    //mov     x3, MAX_DIGITS
-    //mul     x2, x2, x3
-
-    add     x2, x1, SIZEOFULONG
-    add     x3, x1, MAX_DIGITS
+    orr     x2, xzr, SIZEOFULONG
+    orr     x3, xzr, MAX_DIGITS
     mul     x2, x2, x3
 
     bl      memset
@@ -151,7 +146,7 @@ endClearIf:
     add     OA1DIGITS, OADDEND1, AULDIGITS
     add     OA2DIGITS, OADDEND2, AULDIGITS
     add     OSUMDIGITS, OSUM, AULDIGITS
-    mov     x12, 1
+    orr     ONE, xzr, 1
 
 additionLoop:
     // ulSum = ulCarry;
@@ -159,7 +154,7 @@ additionLoop:
     b       noCarry
 
 yesCarry:
-    add     ULSUM, xzr, x12
+    orr     ULSUM, xzr, 1
 
 noCarry:
     // ulSum += oAddend1->aulDigits[lIndex];
@@ -188,7 +183,7 @@ endOverflowIf2:
     str     ULSUM, [OSUMDIGITS, LINDEX, lsl longByteShift]
 
     // lIndex++;
-    add     LINDEX, LINDEX, x12
+    add     LINDEX, LINDEX, ONE
 
     bcc     carry0
     // do comparisons and branch knowing that carry = 1
@@ -234,10 +229,10 @@ endWithCarry:
 endMaxIf:
     // oSum->aulDigits[lSumLength] = 1;
     add     x0, OSUM, AULDIGITS
-    str     x12, [x0, LSUMLENGTH, lsl longByteShift]
+    str     ONE, [x0, LSUMLENGTH, lsl longByteShift]
 
     // lSumLength++;
-    add     LSUMLENGTH, LSUMLENGTH, x12
+    add     LSUMLENGTH, LSUMLENGTH, ONE
 
 endNoCarry:
     // Set the length of the sum.
@@ -246,8 +241,8 @@ endNoCarry:
     str     LSUMLENGTH, [OSUM]
 
     // return TRUE;
-    // x12 = 1 = TRUE
-    orr     x0, xzr, x12
+    // 1 = TRUE
+    orr     x0, xzr, 1
 
     // restore old values of x19-x25
     ldr     x19, [sp, oldx19]
