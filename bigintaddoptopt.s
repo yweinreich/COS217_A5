@@ -123,8 +123,14 @@ endLargerIf:
     // set x1 to 0
     eor     x1, x1, x1
 
-    mov     x2, SIZEOFULONG
-    mov     x3, MAX_DIGITS
+    // changing, don't even think helps...
+
+    //mov     x2, SIZEOFULONG
+    //mov     x3, MAX_DIGITS
+    //mul     x2, x2, x3
+
+    add     x2, x1, SIZEOFULONG
+    add     x3, x1, MAX_DIGITS
     mul     x2, x2, x3
 
     bl      memset
