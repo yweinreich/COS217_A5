@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------
-// bigintaddflat.c                                                    
+// bigintaddoptopt.s                                                    
 // Author: Ariella and Jonathan                                       
 //--------------------------------------------------------------------
 
@@ -166,13 +166,13 @@ noCarry:
 endOverflowIf1:
     // ulSum += oAddend2->aulDigits[lIndex];
     ldr     x0, [OA2DIGITS, LINDEX, lsl longByteShift]
+
     // if the carry flag is already set to 1, branch to regular addition
     // to avoid overwriting it
     bcs     add2NoFlag
     adcs    ULSUM, ULSUM, x0
 
     // Automatically notes overflow with carry flag
-
     b       endOverflowIf2
 
 add2NoFlag:
@@ -186,6 +186,7 @@ endOverflowIf2:
     add     LINDEX, LINDEX, ONE
 
     bcc     carry0
+    
     // do comparisons and branch knowing that carry = 1
     // if (lIndex < lSumLength) goto additionLoop;
     cmp     LINDEX, LSUMLENGTH

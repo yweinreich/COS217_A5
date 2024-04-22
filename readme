@@ -82,7 +82,10 @@ for understanding flattened C code and gdb for assembly code.
 Student 2: What is your assessment of the assignment? Was it helpful?
 Was it fun?
 
-
+The assignment was helpful in understanding the transitions between C,
+flattened C, and assembly. It also helped in understanding the 
+under the hood arithmetic that even assembly does, through our
+efforts to optomize the code in part 2f
 
 ------------------------------------------------------------------------
 (optional) What information can you provide about your submission that
@@ -169,7 +172,7 @@ What are the CPU times consumed by the programs from Parts 2a, 2b, 2d,
 
 Part 2a:  11.930031 seconds
 
-Part 2b:  2.639984 seconds
+Part 2b:  2.661334 seconds
 
 Part 2d:  10.544093 seconds
 
